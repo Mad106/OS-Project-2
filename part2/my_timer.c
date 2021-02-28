@@ -7,22 +7,24 @@
 
 #define BUFSIZE 100
 
+MODULE_LICENSE("Dual BSD/GPL");
+
 // global variable to track original call time
 struct timespec BASE_TIME;
 
 static struct proc_dir_entry *ent;
 
+static char msg[BUFSIZE];
+static int len;
+
 static ssize_t myread(struct file *file, char __user *ubuf, size_t count, loff_t *ppos)
 {
-	char buf[BUFSIZE];
-	int len = 0;
-
 	struct timespec CURTIME = current_kernel_time();
 	struct timespec DIFFERENCE;
 
 	printk(KERN_DEBUG "my_timer read handler\n");
 
-	len += sprintf(buf, "current time: %lu.%lu\n", CURTIME.tv_sec, CURTIME.tv_nsec);
+	len += sprintf(msg, "current time: %lu.%lu\n", CURTIME.tv_sec, CURTIME.tv_nsec);
 
 	if(*ppos > 0 || count < BUFSIZE)
 	{
@@ -47,9 +49,9 @@ static ssize_t myread(struct file *file, char __user *ubuf, size_t count, loff_t
 	DIFFERENCE.tv_sec = BASE_TIME.tv_sec - CURTIME.tv_sec;
 	DIFFERENCE.tv_nsec = BASE_TIME.tv_nsec - CURTIME.tv_nsec;
 
-	len += sprintf(buf + len, "elapsed time: %lu.%lu\n", DIFFERENCE.tv_sec, DIFFERENCE.tv_nsec);
+	len += sprintf(msg + len, "elapsed time: %lu.%lu\n", DIFFERENCE.tv_sec, DIFFERENCE.tv_nsec);
 
-	if(copy_to_user(ubuf, buf, len))
+	if(copy_to_user(ubuf, msg, len))
 		return -1;
 
 	*ppos = len;
@@ -57,15 +59,30 @@ static ssize_t myread(struct file *file, char __user *ubuf, size_t count, loff_t
 	return len;
 }
 
+static ssize_t mywrite(struct file *file, const char __user *ubuf, size_t count, loff_t *ppos)
+{
+	printk(KERN_DEBUG "mywrite\n");
+	if(count > BUFSIZE)
+		len = BUFSIZE;
+	else
+		len = count;
+	
+	copy_from_user(msg,ubuf,len);
+	return len;
+}
+
 static struct file_operations myops =
 {
 	.owner = THIS_MODULE,
 	.read = myread,
+	.write = mywrite;
 };
 
 static int simple_init(void)
 {
 	ent = proc_create("my_timer", 0666, NULL, &myops);
+	if(ent == NULL)
+		return -ENOMEM;
 	return 0;
 }
 
