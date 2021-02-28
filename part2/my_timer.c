@@ -24,7 +24,6 @@ static ssize_t myread(struct file *file, char __user *ubuf, size_t count, loff_t
 
 	printk(KERN_DEBUG "my_timer read handler\n");
 
-	len += sprintf(msg, "current time: %lu.%lu\n", CURTIME.tv_sec, CURTIME.tv_nsec);
 
 	if(*ppos > 0 || count < BUFSIZE)
 	{
@@ -33,23 +32,22 @@ static ssize_t myread(struct file *file, char __user *ubuf, size_t count, loff_t
 	}
 
 	// calculate difference
-	if(BASE_TIME.tv_nsec < CURTIME.tv_nsec)
+	
+	
+	if(CURTIME.tv_nsec < BASE_TIME.tv_nsec)
 	{
-		int usec = (CURTIME.tv_nsec - BASE_TIME.tv_nsec) / 1000000 + 1;
-		CURTIME.tv_nsec -= 1000000 * usec;
-		CURTIME.tv_sec += usec;
+		CURTIME.tv_sec--;
+		CURTIME.tv_sec += 1000000000;
 	}
-	if(BASE_TIME.tv_nsec - CURTIME.tv_nsec > 1000000)
-	{
-		int usec = (CURTIME.tv_nsec - BASE_TIME.tv_nsec) / 1000000;
-		CURTIME.tv_nsec += 1000000 * usec;
-		CURTIME.tv_sec -= usec;
-	}
-
-	DIFFERENCE.tv_sec = BASE_TIME.tv_sec - CURTIME.tv_sec;
-	DIFFERENCE.tv_nsec = BASE_TIME.tv_nsec - CURTIME.tv_nsec;
-
-	len += sprintf(msg + len, "elapsed time: %lu.%lu\n", DIFFERENCE.tv_sec, DIFFERENCE.tv_nsec);
+	
+	DIFFERENCE.tv_sec = CURTIME.tv_sec - BASE_TIME.tv_sec;
+	DIFFERENCE.tv_nsec = CURTIME.tv_nsec - BASE_TIME.tv_nsec;
+	
+	len = sprintf(msg, "current time: %lu.%lu\n", CURTIME.tv_sec, CURTIME.tv_nsec);
+	
+	
+	if(!(CURTIME.tv_sec == DIFFERENCE.tv_sec && CURTIME.tv_nsec == DIFFERENCE.tv_nsec))
+		len += sprintf(msg + len, "elapsed time: %lu.%lu\n", DIFFERENCE.tv_sec, DIFFERENCE.tv_nsec);
 
 	if(copy_to_user(ubuf, msg, len))
 		return -1;
