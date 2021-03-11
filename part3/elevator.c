@@ -468,7 +468,7 @@ long my_issue_request(int start_floor, int destination_floor, int type) {
 /* Implements stop_elevator() system call */
 long my_stop_elevator(void) {
 	long err;
-    printk(KERN_NOTICE "Elevator: /s\n", __FUNCTION__);
+    printk(KERN_NOTICE "Elevator: %s\n", __FUNCTION__);
 
 	mutex_lock(&elevator.mutex);
 	err = (elevator.state == OFFLINE || elevator.deactivating) ? 1 : 0;	
@@ -480,6 +480,10 @@ long my_stop_elevator(void) {
 	return err;    
 }
 
+static int can_stop(void) {
+	return kthread_should_stop() && elevator.num_of_passengers == 0;
+}
+
 static int elevator_run(void *data) {
 	int i, dir, first, last, vel;
 	struct thread_parameter *parm;
@@ -489,7 +493,7 @@ static int elevator_run(void *data) {
 	dir = UP;
 	first = LOBBY;
 	last = NUM_FLOORS;
-	vel = 3;
+	vel = 1;
 
 	while (!can_stop()) {
 		for (i = first; i != last + vel && !can_stop();  i += vel) {	
@@ -502,6 +506,10 @@ static int elevator_run(void *data) {
 
 			ssleep(1.0);
 
+			mutex_lock(&elevator.mutex);
+			if (!elevator.deactivating) {
+				elevator_load(i);
+			} 
 			elevator.state = dir;
 			mutex_unlock(&elevator.mutex);
 			
