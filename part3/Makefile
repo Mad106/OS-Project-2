@@ -1,10 +1,9 @@
 obj-m := elevator.o
 
-KERNEL := 4.19.98
-KDIR := /lib/modules/$(KERNEL)/build
+PWD := $(shell pwd)
+KDIR := /lib/modules/`uname -r`/build
 
 default:
 	$(MAKE) -C $(KDIR) M=$(PWD)
-
 clean:
-	$(MAKE) -C $(KDIR) M=$(PWD) clean
+	rm -f *.o *.ko *.mod.* Module.* modules.*

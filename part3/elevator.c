@@ -9,8 +9,9 @@
 #include <linux/sched.h>
 #include <linux/mutex.h>
 #include <linux/delay.h>
-#include<linux/slab.h>
-#include <sys/syscall.h>
+#include <linux/slab.h>
+#include <linux/syscalls.h>
+//#include <sys/syscall.h>
 MODULE_LICENSE("GPL");
 
 /* syscall numbers */
@@ -143,13 +144,11 @@ static char *passenger_to_string(PassengerType p) {
 }
 
 static unsigned long make_buffer(void) {
-	unsigned long len;
+	unsigned long len = 0;
 	int i, wolves, sheep, grapes;
 	char elevator_sym;
-	struct list_head *temp;	
+	struct list_head *temp;
 	Passenger *p;
-
-	len = 0;		
 
 	len += sprintf(procfs_buffer + len, "Elevator state: %s\n", state_to_string(elevator.state));
 
@@ -181,25 +180,25 @@ static unsigned long make_buffer(void) {
 					elevator_sym, i, elevator.floors[i - 1].num_of_passengers);
 
 			list_for_each(temp, &elevator.floors[i - 1].list) {
-				p = list_entry(temp, Passenger, list);	
+				p = list_entry(temp, Passenger, list);
 				len += sprintf(procfs_buffer + len, " %s", passenger_to_string(p->type));
-			} 
+			}
 
 			len += sprintf(procfs_buffer + len, "\n");
 		}
 	}
-	
+
 	return len;
 }
 
 /* count passengers on the board */
 static void count_passengers(int *wolves, int *sheep, int *grapes) {
-	struct list_head *temp;	
+	struct list_head *temp;
 	Passenger *p;
 
 	*wolves = *sheep = *grapes = 0;
 	list_for_each(temp, &elevator.list) {
-		p = list_entry(temp, Passenger, list);	
+		p = list_entry(temp, Passenger, list);
 		if (p->type == WOLF) {
 			*wolves += 1;
 		} else if (p->type == SHEEP) {
@@ -212,16 +211,16 @@ static void count_passengers(int *wolves, int *sheep, int *grapes) {
 
 /*  */
 static ssize_t proc_read(struct file *file, char __user *ubuf, size_t count, loff_t *ppos) 
-{	
+{
 	unsigned long procfs_buffer_size = 0;
 
-	printk(KERN_NOTICE "Elevator: %s\n", __FUNCTION__);	
-	
+	printk(KERN_NOTICE "Elevator: %s\n", __FUNCTION__);
+
 	mutex_lock(&elevator.mutex);
 
 	if(*ppos == 0) {
-		procfs_buffer_size = make_buffer();	
-	} 
+		procfs_buffer_size = make_buffer();
+	}
 
 	if (*ppos > 0 || count < procfs_buffer_size) {
 		mutex_unlock(&elevator.mutex);
@@ -238,11 +237,44 @@ static ssize_t proc_read(struct file *file, char __user *ubuf, size_t count, lof
 	return procfs_buffer_size;
 }
 
+/* System call stub */
+/*long (*STUB_start_elevator)(void) = NULL;
+EXPORT_SYMBOL(STUB_start_elevator);
+
+long (*STUB_issue_request)(int, int, int) = NULL;
+EXPORT_SYMBOL(STUB_issue_request);
+
+long (*STUB_stop_elevator)(void) = NULL;
+EXPORT_SYMBOL(STUB_stop_elevator);*/
+
+/* System call wrapper */
+/*SYSCALL_DEFINE0(start_elevator) {
+        if (STUB_start_elevator != NULL)
+                return STUB_start_elevator();
+        else
+                return -ENOSYS;
+}
+
+SYSCALL_DEFINE3(issue_request, int, start_floor, int, destination_floor, int, type) {
+        if (STUB_issue_request != NULL)
+                return STUB_issue_request(start_floor, destination_floor, type);
+        else
+                return -ENOSYS;
+}
+
+SYSCALL_DEFINE0(stop_elevator) {
+        if (STUB_stop_elevator != NULL)
+                return STUB_stop_elevator();
+        else
+                return -ENOSYS;
+}*/
+
+
 /* activates the elevator on start_elevator() syscall */
 static int elevator_activate(void) {
 	int i, err;
 
-	elevator.state = IDLE;	
+	elevator.state = IDLE;
 	elevator.current_floor = LOBBY;
 	elevator.num_of_passengers = 0;
 	elevator.num_waiting = 0;
@@ -254,12 +286,12 @@ static int elevator_activate(void) {
 	for (i = 1; i <= NUM_FLOORS; ++i) {
 		elevator.floors[i - 1].num_of_passengers = 0;
 		INIT_LIST_HEAD(&elevator.floors[i - 1].list);
-	}		
+	}
 
 	/* Thread */
 	thread_init_parameter(&elevator_thread);
 	if (IS_ERR(elevator_thread.kthread)) {
-		printk(KERN_WARNING "error spawning thread");		
+		printk(KERN_WARNING "error spawning thread");
 		err = PTR_ERR(elevator_thread.kthread);
 	} else {
 		err = 0;
@@ -385,13 +417,13 @@ static int elevator_init(void) {
 		return -ENOMEM;
 	}
 
-    /* Initialize elevator */
+	/* Initialize elevator */
 	elevator.state = OFFLINE;	
 	mutex_init(&elevator.mutex);
 
 	/* Initializing proc fs */    
 	proc_file = proc_create(PROC_NAME, PROC_PERMS, PROC_PARENT, &proc_fops);
-	if (proc_file == NULL) {			
+	if (proc_file == NULL) {
 		printk(KERN_ALERT "Elevator: %s: Error: Could not initialize /proc/%s\n", __FUNCTION__, PROC_NAME);
 		remove_proc_entry(PROC_NAME, PROC_PARENT); 
 		return -ENOMEM;
@@ -399,10 +431,10 @@ static int elevator_init(void) {
 	printk(KERN_INFO "Elevator: %s: /proc/%s created\n", __FUNCTION__, PROC_NAME);		
 
 	STUB_start_elevator = my_start_elevator;
-    STUB_issue_request = my_issue_request;
-    STUB_stop_elevator = my_stop_elevator;
+	STUB_issue_request = my_issue_request;
+	STUB_stop_elevator = my_stop_elevator;
 
-    return 0;
+	return 0;
 }
 module_init(elevator_init);
 
@@ -430,7 +462,7 @@ module_exit(elevator_exit);
 long my_start_elevator(void) {
 	int err;
 
-    printk(KERN_NOTICE "Elevator: %s\n", __FUNCTION__);
+    	printk(KERN_NOTICE "Elevator: %s\n", __FUNCTION__);
 
 	mutex_lock(&elevator.mutex);	
 	err = elevator.state == OFFLINE ? 0 : 1;	
