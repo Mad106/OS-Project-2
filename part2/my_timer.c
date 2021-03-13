@@ -7,65 +7,59 @@
 
 #define BUFSIZE 100
 
-MODULE_LICENSE("Dual BSD/GPL");
-
 // global variable to track original call time
 struct timespec BASE_TIME;
-
-static struct proc_dir_entry *ent;
-
-static char msg[BUFSIZE];
-static int len;
+static struct proc_dir_entry * ent;
+static char buf[BUFSIZE];
+static int firstRun = 1;
+static int len = 0;
 
 static ssize_t myread(struct file *file, char __user *ubuf, size_t count, loff_t *ppos)
 {
 	struct timespec CURTIME = current_kernel_time();
 	struct timespec DIFFERENCE;
-
-	printk(KERN_DEBUG "my_timer read handler\n");
-
-
-	if(*ppos > 0 || count < BUFSIZE)
+	static int finished = 0;
+	len = 0;
+	// prevents infinite loop
+	if(finished)
 	{
-		BASE_TIME = current_kernel_time();
+		finished = 0;
 		return 0;
 	}
+	finished = 1;
 
-	// calculate difference
-	
-	
-	if(CURTIME.tv_nsec < BASE_TIME.tv_nsec)
+	len += sprintf(buf, "current time: %lu.%lu\n", CURTIME.tv_sec, CURTIME.tv_nsec);
+
+	if(firstRun == 0)
 	{
-		CURTIME.tv_sec--;
-		CURTIME.tv_sec += 1000000000;
+		// calculate difference
+		DIFFERENCE.tv_sec = CURTIME.tv_sec - BASE_TIME.tv_sec;
+		DIFFERENCE.tv_nsec = CURTIME.tv_nsec - BASE_TIME.tv_nsec;
+		if(DIFFERENCE.tv_nsec < 0)
+		{
+			--DIFFERENCE.tv_sec;
+			DIFFERENCE.tv_nsec += 1000000000L;
+		}
+		len += sprintf(buf + len, "elapsed time: %lu.%lu\n", DIFFERENCE.tv_sec, DIFFERENCE.tv_nsec);
 	}
-	
-	DIFFERENCE.tv_sec = CURTIME.tv_sec - BASE_TIME.tv_sec;
-	DIFFERENCE.tv_nsec = CURTIME.tv_nsec - BASE_TIME.tv_nsec;
-	
-	len = sprintf(msg, "current time: %lu.%lu\n", CURTIME.tv_sec, CURTIME.tv_nsec);
-	
-	
-	if(!(CURTIME.tv_sec == DIFFERENCE.tv_sec && CURTIME.tv_nsec == DIFFERENCE.tv_nsec))
-		len += sprintf(msg + len, "elapsed time: %lu.%lu\n", DIFFERENCE.tv_sec, DIFFERENCE.tv_nsec);
 
-	if(copy_to_user(ubuf, msg, len))
-		return -1;
-
-	*ppos = len;
+	if(copy_to_user(ubuf, buf, len))
+		return -EFAULT;
 	BASE_TIME = current_kernel_time();
+	firstRun = 0;
+	*ppos = len;
 	return len;
 }
 
-static ssize_t mywrite(struct file *file, const char __user *ubuf, size_t count, loff_t *ppos)
+static ssize_t mywrite(struct file * file, const char __user *ubuf, size_t count, loff_t *ppos)
 {
 	printk(KERN_DEBUG "mywrite\n");
 	if(count > BUFSIZE)
 		len = BUFSIZE;
 	else
 		len = count;
-	
-	copy_from_user(msg,ubuf,len);
+
+	copy_from_user(buf, ubuf, len);
 	return len;
 }
 
@@ -73,7 +67,7 @@ static struct file_operations myops =
 {
 	.owner = THIS_MODULE,
 	.read = myread,
-	.write = mywrite;
+	.write = mywrite,
 };
 
 static int simple_init(void)
