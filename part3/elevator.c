@@ -10,12 +10,13 @@
 #include <linux/mutex.h>
 #include <linux/delay.h>
 #include<linux/slab.h>
+#include <sys/syscall.h>
 MODULE_LICENSE("GPL");
 
-/* syscall stubs */
-extern long (*STUB_start_elevator)(void);
-extern long (*STUB_issue_request)(int, int, int);
-extern long (*STUB_stop_elevator)(void);
+/* syscall numbers */
+#define __NR_START_ELEVATOR 335
+#define __NR_STOP_ELEVATOR 336
+#define __NR_ISSUE_REQUEST 337
 
 /* proc fs */
 #define PROC_NAME "elevator"

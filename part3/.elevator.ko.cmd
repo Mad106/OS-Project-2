@@ -1,0 +1,1 @@
+cmd_/home/madison/Desktop/OS-Project-2/part3/elevator.ko := ld -r -m elf_x86_64  -z max-page-size=0x200000 -T ./scripts/module-common.lds  --build-id  -o /home/madison/Desktop/OS-Project-2/part3/elevator.ko /home/madison/Desktop/OS-Project-2/part3/elevator.o /home/madison/Desktop/OS-Project-2/part3/elevator.mod.o ;  true
