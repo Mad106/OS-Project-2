@@ -7,6 +7,8 @@
 
 #define BUFSIZE 100
 
+MODULE_LICENSE("GPL");
+
 // global variable to track original call time
 struct timespec BASE_TIME;
 static struct proc_dir_entry * ent;
@@ -28,7 +30,8 @@ static ssize_t myread(struct file *file, char __user *ubuf, size_t count, loff_t
 	}
 	finished = 1;
 
-	len += sprintf(buf, "current time: %lu.%lu\n", CURTIME.tv_sec, CURTIME.tv_nsec);
+	len += sprintf(buf, "current time: %lu.%lu\n", CURTIME.tv_sec,
+		 CURTIME.tv_nsec);
 
 	if(firstRun == 0)
 	{
@@ -40,7 +43,8 @@ static ssize_t myread(struct file *file, char __user *ubuf, size_t count, loff_t
 			--DIFFERENCE.tv_sec;
 			DIFFERENCE.tv_nsec += 1000000000L;
 		}
-		len += sprintf(buf + len, "elapsed time: %lu.%lu\n", DIFFERENCE.tv_sec, DIFFERENCE.tv_nsec);
+		len += sprintf(buf + len, "elapsed time: %lu.%lu\n",
+			DIFFERENCE.tv_sec, DIFFERENCE.tv_nsec);
 	}
 
 	if(copy_to_user(ubuf, buf, len))
@@ -51,7 +55,8 @@ static ssize_t myread(struct file *file, char __user *ubuf, size_t count, loff_t
 	return len;
 }
 
-static ssize_t mywrite(struct file * file, const char __user *ubuf, size_t count, loff_t *ppos)
+static ssize_t mywrite(struct file * file, const char __user *ubuf, size_t count, 
+	loff_t *ppos)
 {
 	printk(KERN_DEBUG "mywrite\n");
 	if(count > BUFSIZE)

@@ -1,0 +1,70 @@
+                              COP 4610 Proj 2
+
+Group Members
+-------------
+- Jessica Mitchell
+- Madison Sayles
+- Ryan Lazzari
+
+
+Division of Labor
+----------------
+Part 1:
+   - Jessica Mitchell
+
+Part 2:
+   - Ryan Lazzari
+   - Madison Sayles
+
+Part 3:
+   - Jessica Mitchell
+   - Madison Sayles
+   - Ryan Lazzari
+
+
+Tar Archive
+-----------
+Part 1:
+   - empty.c: Empty c program for baseline num of syscalls
+   - empty.trace: Contains syscalls for empty.c
+   - part1.c: C program that contains exactly 4 more syscals
+              than empty.c
+   - part1.trace Contains syscalls for part1.c
+
+Part 2:
+   - my_timer.c: C file to create a timer kernel module that tracks 
+                 time between calls to module 
+   - makefile: Makefile for my_timer.c
+
+Part 3:
+   - elevator.c: C file to create elevator kernel module
+   - sys_call.c: C file that contains the wrapper for the elevator
+                 system calls
+   - makefile: Makefile to compile elevator.c
+
+How To Compile
+--------------
+Part 1:
+To compile empty.c, execute gcc empty.c -o empty.x. Then execute
+strace -o empty.trace ./empty.x to obtain the syscalls for empty.x.
+To compile part1.c, execute gcc part1.c -o part1.x. Then execute
+strace -o part1.trace ./part1.x to obtain syscalls for part1.x.
+
+Part 2:
+First, compile the module using sudo make. Then, insert the module using
+sudo insmod my_timer.ko. To see the status of the timer, execute cat
+/proc/my_timer. To remove the timer, execute sudo rmmod my_timer
+
+Part 3:
+First, compile the module using sudo make. Then, insert the module using
+sudo insmod elevator.ko. Now that the module is insert, the elevator can
+be start using the provided consumer.c file. After compiling consumer.c
+(gcc consumer.c -o consumer.x), execute the command ./consumer.x --start
+to start the elevator. Then, using the provided producer.c (gcc producer.c
+-o producer.x), you can add passengers by executing ./producer.x N, where N
+is a random integer. To see the status of the elevator, execute cat
+/proc/elevator. To stop the elevator, execute ./consumer.x --stop.
+
+Known Bugs / Incomplete Parts
+-----------------------------
+None

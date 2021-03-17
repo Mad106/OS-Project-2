@@ -30,7 +30,8 @@ int main()
 {
     mkdir("test_dir", 0777); // Syscall 1: mkdir()
 
-    int fd = open("test_dir/part1.txt", O_WRONLY | O_TRUNC | O_CREAT, 0777); // Syscall 2: open()
+    // Syscall 2: open()
+    int fd = open("test_dir/part1.txt", O_WRONLY | O_TRUNC | O_CREAT, 0777); 
 
     write(fd, MESSAGE, 18 - 1); // Sysccall 3: write()
 
