@@ -905,6 +905,188 @@ deps_/home/madison/Desktop/OS-Project-2/part3/elevator.o := \
     $(wildcard include/config/slub.h) \
     $(wildcard include/config/slob.h) \
   include/linux/kasan.h \
+  include/linux/syscalls.h \
+    $(wildcard include/config/arch/has/syscall/wrapper.h) \
+    $(wildcard include/config/ftrace/syscalls.h) \
+    $(wildcard include/config/odd/rt/sigaction.h) \
+    $(wildcard include/config/clone/backwards.h) \
+    $(wildcard include/config/clone/backwards3.h) \
+    $(wildcard include/config/old/sigsuspend.h) \
+    $(wildcard include/config/old/sigsuspend3.h) \
+    $(wildcard include/config/advise/syscalls.h) \
+  include/uapi/linux/aio_abi.h \
+  include/linux/signal.h \
+  include/trace/syscall.h \
+    $(wildcard include/config/have/syscall/tracepoints.h) \
+  include/linux/tracepoint.h \
+    $(wildcard include/config/tracepoint.h) \
+  include/linux/trace_events.h \
+    $(wildcard include/config/bpf/events.h) \
+    $(wildcard include/config/kprobe/events.h) \
+    $(wildcard include/config/uprobe/events.h) \
+  include/linux/ring_buffer.h \
+    $(wildcard include/config/ring/buffer/allow/swap.h) \
+    $(wildcard include/config/ring/buffer.h) \
+  include/linux/mm.h \
+    $(wildcard include/config/have/arch/mmap/rnd/bits.h) \
+    $(wildcard include/config/have/arch/mmap/rnd/compat/bits.h) \
+    $(wildcard include/config/arch/uses/high/vma/flags.h) \
+    $(wildcard include/config/arch/has/pkeys.h) \
+    $(wildcard include/config/ppc.h) \
+    $(wildcard include/config/parisc.h) \
+    $(wildcard include/config/sparc64.h) \
+    $(wildcard include/config/stack/growsup.h) \
+    $(wildcard include/config/dev/pagemap/ops.h) \
+    $(wildcard include/config/shmem.h) \
+    $(wildcard include/config/have/memblock.h) \
+    $(wildcard include/config/debug/vm/rb.h) \
+    $(wildcard include/config/page/poisoning.h) \
+    $(wildcard include/config/debug/pagealloc.h) \
+    $(wildcard include/config/hibernation.h) \
+    $(wildcard include/config/hugetlbfs.h) \
+  include/linux/page_ext.h \
+    $(wildcard include/config/idle/page/tracking.h) \
+  include/linux/stacktrace.h \
+    $(wildcard include/config/stacktrace.h) \
+    $(wildcard include/config/user/stacktrace/support.h) \
+  include/linux/stackdepot.h \
+  include/linux/page_ref.h \
+    $(wildcard include/config/debug/page/ref.h) \
+  include/linux/page-flags.h \
+    $(wildcard include/config/arch/uses/pg/uncached.h) \
+    $(wildcard include/config/memory/failure.h) \
+    $(wildcard include/config/swap.h) \
+    $(wildcard include/config/thp/swap.h) \
+    $(wildcard include/config/ksm.h) \
+  include/linux/memremap.h \
+  include/linux/ioport.h \
+  arch/x86/include/asm/pgtable.h \
+    $(wildcard include/config/debug/wx.h) \
+    $(wildcard include/config/have/arch/transparent/hugepage/pud.h) \
+    $(wildcard include/config/have/arch/soft/dirty.h) \
+    $(wildcard include/config/arch/enable/thp/migration.h) \
+  arch/x86/include/asm/pgtable_64.h \
+  arch/x86/include/asm/pgtable-invert.h \
+  include/asm-generic/pgtable.h \
+    $(wildcard include/config/have/arch/huge/vmap.h) \
+    $(wildcard include/config/x86/espfix64.h) \
+  include/linux/huge_mm.h \
+  include/linux/sched/coredump.h \
+    $(wildcard include/config/core/dump/default/elf/headers.h) \
+  include/linux/vmstat.h \
+    $(wildcard include/config/vm/event/counters.h) \
+    $(wildcard include/config/debug/tlbflush.h) \
+    $(wildcard include/config/debug/vm/vmacache.h) \
+  include/linux/vm_event_item.h \
+    $(wildcard include/config/memory/balloon.h) \
+    $(wildcard include/config/balloon/compaction.h) \
+  include/linux/poll.h \
+  include/uapi/linux/poll.h \
+  arch/x86/include/generated/uapi/asm/poll.h \
+  include/uapi/asm-generic/poll.h \
+  include/uapi/linux/eventpoll.h \
+  include/linux/trace_seq.h \
+  include/linux/seq_buf.h \
+  include/linux/perf_event.h \
+    $(wildcard include/config/have/hw/breakpoint.h) \
+    $(wildcard include/config/function/tracer.h) \
+    $(wildcard include/config/cpu/sup/intel.h) \
+  include/uapi/linux/perf_event.h \
+  include/uapi/linux/bpf_perf_event.h \
+  arch/x86/include/generated/uapi/asm/bpf_perf_event.h \
+  include/uapi/asm-generic/bpf_perf_event.h \
+  include/linux/ptrace.h \
+  include/linux/sched/signal.h \
+    $(wildcard include/config/sched/autogroup.h) \
+    $(wildcard include/config/bsd/process/acct.h) \
+    $(wildcard include/config/taskstats.h) \
+    $(wildcard include/config/audit.h) \
+  include/linux/sched/jobctl.h \
+  include/linux/sched/task.h \
+    $(wildcard include/config/have/copy/thread/tls.h) \
+    $(wildcard include/config/have/exit/thread.h) \
+    $(wildcard include/config/arch/wants/dynamic/task/struct.h) \
+    $(wildcard include/config/have/arch/thread/struct/whitelist.h) \
+  include/linux/pid_namespace.h \
+    $(wildcard include/config/pid/ns.h) \
+  include/uapi/linux/ptrace.h \
+  arch/x86/include/asm/perf_event.h \
+  arch/x86/include/asm/stacktrace.h \
+  arch/x86/include/asm/switch_to.h \
+  include/linux/sched/task_stack.h \
+    $(wildcard include/config/debug/stack/usage.h) \
+  include/uapi/linux/magic.h \
+  arch/x86/include/asm/local64.h \
+  include/asm-generic/local64.h \
+  arch/x86/include/asm/local.h \
+  arch/x86/include/asm/hw_breakpoint.h \
+  arch/x86/include/uapi/asm/hw_breakpoint.h \
+  include/linux/kdebug.h \
+  arch/x86/include/asm/kdebug.h \
+  include/linux/ftrace.h \
+    $(wildcard include/config/dynamic/ftrace.h) \
+    $(wildcard include/config/dynamic/ftrace/with/regs.h) \
+    $(wildcard include/config/stack/tracer.h) \
+    $(wildcard include/config/function/profiler.h) \
+  include/linux/trace_clock.h \
+  arch/x86/include/asm/trace_clock.h \
+  include/linux/kallsyms.h \
+    $(wildcard include/config/kallsyms/all.h) \
+  arch/x86/include/asm/ftrace.h \
+  include/linux/compat.h \
+    $(wildcard include/config/compat/old/sigaction.h) \
+  include/linux/compat_time.h \
+  include/linux/socket.h \
+  arch/x86/include/uapi/asm/socket.h \
+  include/uapi/asm-generic/socket.h \
+  arch/x86/include/uapi/asm/sockios.h \
+  include/uapi/asm-generic/sockios.h \
+  include/uapi/linux/sockios.h \
+  include/linux/uio.h \
+    $(wildcard include/config/arch/has/uaccess/mcsafe.h) \
+  include/uapi/linux/uio.h \
+  include/uapi/linux/socket.h \
+  include/uapi/linux/if.h \
+  include/uapi/linux/libc-compat.h \
+  include/uapi/linux/hdlc/ioctl.h \
+  arch/x86/include/asm/compat.h \
+  arch/x86/include/asm/user32.h \
+  arch/x86/include/asm/syscall_wrapper.h \
+  include/linux/cpu.h \
+    $(wildcard include/config/pm/sleep/smp.h) \
+    $(wildcard include/config/hotplug/smt.h) \
+  include/linux/node.h \
+    $(wildcard include/config/memory/hotplug/sparse.h) \
+  include/linux/device.h \
+    $(wildcard include/config/debug/devres.h) \
+    $(wildcard include/config/generic/msi/irq/domain.h) \
+    $(wildcard include/config/pinctrl.h) \
+    $(wildcard include/config/generic/msi/irq.h) \
+    $(wildcard include/config/dma/cma.h) \
+    $(wildcard include/config/of.h) \
+    $(wildcard include/config/devtmpfs.h) \
+    $(wildcard include/config/sysfs/deprecated.h) \
+  include/linux/klist.h \
+  include/linux/pm.h \
+    $(wildcard include/config/vt/console/sleep.h) \
+    $(wildcard include/config/pm.h) \
+    $(wildcard include/config/pm/clk.h) \
+    $(wildcard include/config/pm/generic/domains.h) \
+  arch/x86/include/asm/device.h \
+    $(wildcard include/config/intel/iommu.h) \
+    $(wildcard include/config/amd/iommu.h) \
+    $(wildcard include/config/sta2x11.h) \
+    $(wildcard include/config/x86/dev/dma/ops.h) \
+    $(wildcard include/config/pci/domains.h) \
+  include/linux/pm_wakeup.h \
+  include/linux/cpuhotplug.h \
+  include/linux/irq_work.h \
+    $(wildcard include/config/irq/work.h) \
+  arch/x86/include/asm/irq_work.h \
+  include/linux/jump_label_ratelimit.h \
+  include/linux/perf_regs.h \
+    $(wildcard include/config/have/perf/regs.h) \
+  arch/x86/include/uapi/asm/perf_regs.h \
 
 /home/madison/Desktop/OS-Project-2/part3/elevator.o: $(deps_/home/madison/Desktop/OS-Project-2/part3/elevator.o)
 

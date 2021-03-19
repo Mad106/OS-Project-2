@@ -14,7 +14,7 @@ struct timespec BASE_TIME;
 static struct proc_dir_entry * ent;
 static char buf[BUFSIZE];
 static int firstRun = 1;
-static int len = 0;
+static int len = 0;	//length of message
 
 static ssize_t myread(struct file *file, char __user *ubuf, size_t count, loff_t *ppos)
 {
@@ -29,11 +29,11 @@ static ssize_t myread(struct file *file, char __user *ubuf, size_t count, loff_t
 		return 0;
 	}
 	finished = 1;
-
+	
 	len += sprintf(buf, "current time: %lu.%lu\n", CURTIME.tv_sec,
 		 CURTIME.tv_nsec);
 
-	if(firstRun == 0)
+	if(firstRun == 0)	//there is something to compare current to
 	{
 		// calculate difference
 		DIFFERENCE.tv_sec = CURTIME.tv_sec - BASE_TIME.tv_sec;
@@ -56,7 +56,7 @@ static ssize_t myread(struct file *file, char __user *ubuf, size_t count, loff_t
 }
 
 static ssize_t mywrite(struct file * file, const char __user *ubuf, size_t count, 
-	loff_t *ppos)
+loff_t *ppos)
 {
 	printk(KERN_DEBUG "mywrite\n");
 	if(count > BUFSIZE)
@@ -78,7 +78,7 @@ static struct file_operations myops =
 static int simple_init(void)
 {
 	ent = proc_create("my_timer", 0666, NULL, &myops);
-	if(ent == NULL)
+	if(ent == NULL)	//there needs to be reference to my_timer
 		return -ENOMEM;
 	return 0;
 }
