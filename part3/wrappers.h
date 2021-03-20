@@ -7,7 +7,7 @@
 
 #define __NR_START_ELEVATOR 335
 #define __NR_STOP_ELEVATOR 336
-#define __nR_ISSUE_REQUEST 337
+#define __NR_ISSUE_REQUEST 337
 
 int start_elevator() {
 	return syscall(__NR_START_ELEVATOR);
